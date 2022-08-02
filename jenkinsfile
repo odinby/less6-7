@@ -1,0 +1,15 @@
+node {
+    stage('Checkuot'){
+        checkout([$class: 'GitSCM', branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/odinby/less6-7.git']]])
+    }
+    stage('Docker Build'){
+        sh 'docker build -t odinby/lesson6-7:1.0 .'
+    }
+    stage('Docker Public'){
+        withCredentials([string(credentialsId: 'DockerHubPwd', variable: 'DockerHubPwd')]) {
+            sh 'docker login -u odinby -p ${DockerHubPwd}'
+        }
+        sh 'docker push odinby/lesson6-7:1.0'    
+    }
+
+}
